@@ -1,0 +1,24 @@
+{
+  "name": "lambda",
+  "version": "1.0.0",
+  "description": "",
+  "main": "serverless.yml",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.8.6",
+    "@babel/preset-env": "^7.8.6",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-source-map-support": "^2.1.1",
+    "serverless-webpack": "^5.3.1",
+    "webpack": "^4.41.6",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "dependencies": {
+    "moment": "^2.24.0",
+    "source-map-support": "^0.5.16"
+  }
+}

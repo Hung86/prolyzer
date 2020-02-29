@@ -1,0 +1,105 @@
+# CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2.1
+
+defaults: &config_project_defaults
+  working_directory: ~/repo
+
+orbs:
+  aws-cli: circleci/aws-cli@0.1.20
+
+executors:
+  node_default:
+    docker:
+      - image: circleci/node:12.13.0
+
+commands:
+  configure_aws:
+    description: "Sets up AWS profiles and configuration"
+    steps:
+      - aws-cli/setup:
+          profile-name: highsugar
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_REGION
+  test_build_frontend:
+    description: "Installs, tests and builds the frontend"
+    steps:
+      - run:
+          working_directory: ~/repo/frontend
+          command: npm test
+      - run:
+          working_directory: ~/repo/frontend
+          command: npm run build
+
+jobs:
+  backend:
+    <<: *config_project_defaults
+    executor: node_default
+    steps:
+      - configure_aws
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/lambda-nodejs/package-lock.json" }}-{{ .Revision }}
+            - v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/lambda-nodejs/package-lock.json" }}
+            - v1-{{ arch }}-{{ .Branch }}
+            - v1-{{ arch }}
+      - run:
+          working_directory: ~/repo/backend
+          command: npm run install-all
+      - save_cache:
+          paths:
+            - ~/repo/backend/node_modules
+            - ~/repo/backend/lambda-nodejs/node_modules
+          key: v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/lambda-nodejs/package-lock.json" }}-{{ .Revision }}
+      - run:
+          working_directory: ~/repo/backend
+          command: npm run deploy-all
+
+  frontend:
+    <<: *config_project_defaults
+    executor: node_default
+#    docker:
+#      - image: circleci/node:12.13.0
+#      - image: circleci/python:3.7
+    steps:
+      - configure_aws
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-{{ arch }}-{{ .Branch }}-{{ checksum "frontend/package-lock.json" }}-{{ .Revision }}
+            - v1-{{ arch }}-{{ .Branch }}-{{ checksum "frontend/package-lock.json" }}
+            - v1-{{ arch }}-{{ .Branch }}
+            - v1-{{ arch }}
+      - run:
+          working_directory: ~/repo/frontend
+          command: npm install
+      - save_cache:
+          paths:
+            - ~/repo/frontend/node_modules
+          key: v1-{{ arch }}-{{ .Branch }}-{{ checksum "frontend/package-lock.json" }}-{{ .Revision }}
+      - test_build_frontend
+      - run:
+          working_directory: ~/repo/frontend
+          command: npm run deploy
+      - run:
+          working_directory: ~/repo/frontend
+          command: npm run domain
+
+workflows:
+  version: 2
+  master_flow:
+    jobs:
+      - backend:
+          filters:
+            branches:
+              only:
+                - master
+      - frontend:
+          filters:
+            branches:
+              only:
+                - master

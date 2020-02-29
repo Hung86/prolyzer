@@ -14,7 +14,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "cross-env SLS_DEBUG=* serverless deploy --aws-profile highsugar && SLS_DEBUG=* serverless syncToS3 --aws-profile highsugar && SLS_DEBUG=* serverless invalidateCloudFrontCache --aws-profile highsugar",
+    "domain": "cross-env SLS_DEBUG=* serverless domainInfo --aws-profile highsugar"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -30,5 +32,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.0",
+    "serverless": "^1.65.0",
+    "serverless-cloudformation-changesets": "0.0.2",
+    "serverless-iam-roles-per-function": "^2.0.2",
+    "serverless-single-page-app-plugin": "file:./serverless-single-page-app-plugin"
   }
 }

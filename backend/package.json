@@ -1,0 +1,23 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend and Infrastructure for Prolyzer",
+  "main": "serverless.yml",
+  "dependencies": {},
+  "devDependencies": {
+    "cross-env": "^7.0.0",
+    "serverless": "^1.65.0",
+    "serverless-cloudformation-changesets": "0.0.2",
+    "serverless-dynamodb-autoscaling": "^0.6.2",
+    "serverless-iam-roles-per-function": "^2.0.2"
+  },
+  "scripts": {
+    "install-all": "npm install && npm run install-lambda",
+    "install-lambda": "cd lambda-nodejs && npm install",
+    "deploy-all": "npm run deploy-lambda-nodejs && npm run deploy-lambda-python",
+    "deploy-lambda-nodejs": "cd lambda-nodejs && cross-env SLS_DEBUG=* serverless deploy --aws-profile highsugar",
+    "deploy-lambda-python": "cd lambda-python && echo hello"
+  },
+  "author": "",
+  "license": "ISC"
+}
