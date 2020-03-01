@@ -2,7 +2,7 @@ from ibm_watson import ToneAnalyzerV3
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 #import os
 import tweepy as twp
-#import json
+import json
 #import preprocessor as p
 #from preprocessor import clean, tokenize, parse
 
@@ -44,7 +44,14 @@ def prolyzer(event, context):
 		'sales have been disappointing for the past three '\
 		'quarters. We have a competitive product, but we '\
 		'need to do a better job of selling it!'
-	return nTweet
+	response = {
+        "statusCode": 200,
+        "body": json.dumps({
+            "message": nTweet
+        })
+    }
+
+	return response
 
 handler = prolyzer
 '''tone_analysis = tone_analyzer.tone(
