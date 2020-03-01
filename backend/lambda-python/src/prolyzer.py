@@ -19,10 +19,3 @@ def prolyzer(event, context):
 
 
 handler = prolyzer
-'''tone_analysis = tone_analyzer.tone(
-{'text': nTweet},
-content_type='application/json'
-).get_result()
-
-print(json.dumps(tone_analysis))'''
-
