@@ -31,7 +31,7 @@ functions:
       - http:
           path: helloWorld
           method: get
-   prolyzerPython:
+  prolyzerPython:
     name: ${{self:service}}-${{self:provider.stage}}-prolyzer
     description: 'Prolyzer for Python'
     handler: src/prolyzer.handler
@@ -39,8 +39,8 @@ functions:
     memorySize: 128
     events:
       - http:
-          path: prolyzer
-          method: get
+         path: prolyzer
+         method: get
 
 custom:
   # Custom staging profiles. You may access or modify these credentials in ~/.aws/credentials
