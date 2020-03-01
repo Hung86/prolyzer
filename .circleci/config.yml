@@ -24,6 +24,22 @@ commands:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           aws-region: AWS_REGION
+  install_python_pip:
+    description: "Installs python and pip"
+    steps:
+      - run: python --version
+      - run:
+          name: Install Python
+          working_directory: /tmp
+          command: |
+            sudo apt-get install build-essential checkinstall
+            sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
+            wget https://www.python.org/ftp/python/3.6.0/Python-3.6.0.tar.xz
+            tar xvf Python-3.6.0.tar.xz
+            cd Python-3.6.0/
+            ./configure
+            sudo make altinstall
+            python --version
   test_build_frontend:
     description: "Installs, tests and builds the frontend"
     steps:
@@ -43,8 +59,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/lambda-nodejs/package-lock.json" }}-{{ .Revision }}
-            - v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/lambda-nodejs/package-lock.json" }}
+            - v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/lambda-nodejs/package-lock.json" }}-{{ checksum "backend/lambda-python/package-lock.json" }}-{{ .Revision }}
+            - v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/lambda-nodejs/package-lock.json" }}-{{ checksum "backend/lambda-python/package-lock.json" }}
             - v1-{{ arch }}-{{ .Branch }}
             - v1-{{ arch }}
       - run:
@@ -54,7 +70,9 @@ jobs:
           paths:
             - ~/repo/backend/node_modules
             - ~/repo/backend/lambda-nodejs/node_modules
-          key: v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/lambda-nodejs/package-lock.json" }}-{{ .Revision }}
+            - ~/repo/backend/lambda-python/node_modules
+          key: v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/lambda-nodejs/package-lock.json" }}-{{ checksum "backend/lambda-python/package-lock.json" }}-{{ .Revision }}
+      - install_python_pip
       - run:
           working_directory: ~/repo/backend
           command: npm run deploy-all
@@ -62,9 +80,6 @@ jobs:
   frontend:
     <<: *config_project_defaults
     executor: node_default
-#    docker:
-#      - image: circleci/node:12.13.0
-#      - image: circleci/python:3.7
     steps:
       - configure_aws
       - checkout

@@ -52,15 +52,14 @@ resources:
 #     'ExchangeRateLambdaFunction'
 functions:
   helloWorldNode:
-    runtime: nodejs12.x
-    name: ${{self:service}}-${{self:provider.stage}}-helloWorldNode
+    name: ${{self:service}}-${{self:provider.stage}}-helloWorld
     description: 'Hello World for NodeJS'
     handler: src/helloWorld.default
     timeout: 30
     memorySize: 128
     events:
       - http:
-          path: helloWorldNode
+          path: helloWorld
           method: get
 
 custom:
