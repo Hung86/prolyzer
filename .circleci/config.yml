@@ -7,39 +7,31 @@ version: 2.1
 defaults: &config_project_defaults
   working_directory: ~/repo
 
-orbs:
-  aws-cli: circleci/aws-cli@0.1.20
-
 executors:
-  node_default:
+  node_python_default:
     docker:
-      - image: circleci/node:12.13.0
+      - image: nikolaik/python-nodejs:python3.6-nodejs12
 
 commands:
   configure_aws:
-    description: "Sets up AWS profiles and configuration"
+    description: "Sets up AWS profiles, CLI and configuration"
     steps:
-      - aws-cli/setup:
-          profile-name: highsugar
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          aws-region: AWS_REGION
-  install_python_pip:
-    description: "Installs python and pip"
-    steps:
-      - run: python --version
       - run:
-          name: Install Python
+          name: Install AWS CLI v2
           working_directory: /tmp
           command: |
-            sudo apt-get install build-essential checkinstall
-            sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
-            wget https://www.python.org/ftp/python/3.6.0/Python-3.6.0.tar.xz
-            tar xvf Python-3.6.0.tar.xz
-            cd Python-3.6.0/
-            ./configure
-            sudo make altinstall
-            python --version
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            ./aws/install
+      - run:
+          name: Configure AWS Access Key ID
+          command: aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile highsugar
+      - run:
+          name: Configure AWS Secret Access Key
+          command: aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile highsugar
+      - run:
+          name: Configure AWS default region
+          command: aws configure set region $AWS_REGION --profile highsugar
   test_build_frontend:
     description: "Installs, tests and builds the frontend"
     steps:
@@ -53,9 +45,8 @@ commands:
 jobs:
   backend:
     <<: *config_project_defaults
-    executor: node_default
+    executor: node_python_default
     steps:
-      - configure_aws
       - checkout
       - restore_cache:
           keys:
@@ -66,22 +57,22 @@ jobs:
       - run:
           working_directory: ~/repo/backend
           command: npm run install-all
+      - configure_aws
       - save_cache:
           paths:
             - ~/repo/backend/node_modules
             - ~/repo/backend/lambda-nodejs/node_modules
             - ~/repo/backend/lambda-python/node_modules
+            - /tmp
           key: v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/lambda-nodejs/package-lock.json" }}-{{ checksum "backend/lambda-python/package-lock.json" }}-{{ .Revision }}
-      - install_python_pip
       - run:
           working_directory: ~/repo/backend
           command: npm run deploy-all
 
   frontend:
     <<: *config_project_defaults
-    executor: node_default
+    executor: node_python_default
     steps:
-      - configure_aws
       - checkout
       - restore_cache:
           keys:
@@ -92,9 +83,11 @@ jobs:
       - run:
           working_directory: ~/repo/frontend
           command: npm install
+      - configure_aws
       - save_cache:
           paths:
             - ~/repo/frontend/node_modules
+            - /tmp
           key: v1-{{ arch }}-{{ .Branch }}-{{ checksum "frontend/package-lock.json" }}-{{ .Revision }}
       - test_build_frontend
       - run:
