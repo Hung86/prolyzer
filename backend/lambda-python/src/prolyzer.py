@@ -4,7 +4,6 @@ import numpy as np
 import os
 import tweepy as twp
 
-
 def prolyzer(event, context):
     # Playing around with numpy
 	a = np.arange(15).reshape(3, 5)
@@ -31,8 +30,7 @@ def prolyzer(event, context):
 
 	response = {
 		"statusCode": 200,
-		"body": json.dumps({
-			"tweets": totalTweets
+		"body": totalTweets
 		})
 	}
 
