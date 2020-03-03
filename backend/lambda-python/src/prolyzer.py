@@ -36,7 +36,7 @@ def prolyzer(event, context):
 		})
 	}
 
-return response
+	return response
 
 
 handler = prolyzer
