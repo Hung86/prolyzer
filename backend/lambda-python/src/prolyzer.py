@@ -25,7 +25,7 @@ def prolyzer(event, context):
 
 	tone_analyzer.set_service_url('https://api.us-south.tone-analyzer.watson.cloud.ibm.com/instances/046af756-8b3b-4b48-be22-627b30bf6321')
 
-	tone_analyzer.set_disable_ssl_verification(True)
+	tone_analyzer.set_disable_ssl_verification(False)
 
 	#tweets = api.user_timeline()
 	search_words = "#covid-19"
