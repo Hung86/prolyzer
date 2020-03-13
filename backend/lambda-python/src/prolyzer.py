@@ -33,7 +33,7 @@ def prolyzer(event, context):
 
 	totalTweets = ''
 	# Collect tweets
-	tweets = twp.Cursor(api.search,q=search_words,lang="en",since=date_since).items(10)
+	tweets = twp.Cursor(api.search,q=search_words,lang="en",since=date_since).items(100)
 	#p.set_options(p.OPT.URL,p.OPT.MENTION,p.OPT.HASHTAG,p.OPT.RESERVED,p.OPT.NUMBER)
 	for tweet in tweets:
 		#totalTweets = totalTweets + p.clean(tweet.text)+ '\n'
