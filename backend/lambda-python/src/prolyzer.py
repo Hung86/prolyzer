@@ -8,7 +8,7 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 #import preprocessor as p
 
 def prolyzer(event, context):
-	searchTerm = event["queryStringParameters"]['queryStringParam1']
+	searchTerm = event["queryStringParameters"]['search']
 
 	consumer_key = 'k7bmKlFjUf3eyFcwpqi1D34aZ'
 	consumer_secret = 'l4u0IRz5AYt9HXThR5lWTN41dTX5UMrs3VmZnmNPZky1mJmf7M'
