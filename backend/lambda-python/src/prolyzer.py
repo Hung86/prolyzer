@@ -8,7 +8,7 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 #import preprocessor as p
 
 def prolyzer(event, context):
-	#searchTerm = event['search']
+	searchTerm = event['search']
 
 	consumer_key = 'k7bmKlFjUf3eyFcwpqi1D34aZ'
 	consumer_secret = 'l4u0IRz5AYt9HXThR5lWTN41dTX5UMrs3VmZnmNPZky1mJmf7M'
@@ -30,9 +30,9 @@ def prolyzer(event, context):
 	tone_analyzer.set_disable_ssl_verification(True)
 
 	#tweets = api.user_timeline()
-	search_words = "#covid-19"
+	#search_words = "#covid-19"
 	#date_since = "2019-12-20"
-	#search_words = searchTerm
+	search_words = searchTerm
 
 	totalTweets = ''
 	# Collect tweets
