@@ -8,6 +8,8 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 #import preprocessor as p
 
 def prolyzer(event, context):
+	searchTerm = event["queryStringParameters"]['search']
+
 	consumer_key = 'k7bmKlFjUf3eyFcwpqi1D34aZ'
 	consumer_secret = 'l4u0IRz5AYt9HXThR5lWTN41dTX5UMrs3VmZnmNPZky1mJmf7M'
 	access_token = '1263822842-QDqzja2ZGdE2RWlL12UxEnMCcGsDUxDkxsfdDZc'
@@ -25,15 +27,16 @@ def prolyzer(event, context):
 
 	tone_analyzer.set_service_url('https://api.us-south.tone-analyzer.watson.cloud.ibm.com/instances/046af756-8b3b-4b48-be22-627b30bf6321')
 
-	tone_analyzer.set_disable_ssl_verification(False)
+	tone_analyzer.set_disable_ssl_verification(True)
 
 	#tweets = api.user_timeline()
-	search_words = "#covid-19"
-	date_since = "2019-12-20"
+	#search_words = "#covid-19"
+	#date_since = "2019-12-20"
+	search_words = searchTerm
 
 	totalTweets = ''
 	# Collect tweets
-	tweets = twp.Cursor(api.search,q=search_words,lang="en",since=date_since).items(100)
+	tweets = twp.Cursor(api.search,q=search_words,lang="en").items(100)
 	#p.set_options(p.OPT.URL,p.OPT.MENTION,p.OPT.HASHTAG,p.OPT.RESERVED,p.OPT.NUMBER)
 	for tweet in tweets:
 		#totalTweets = totalTweets + p.clean(tweet.text)+ '\n'

@@ -7,6 +7,8 @@ def hello_world(event, context):
     # Playing around with numpy
     a = np.arange(15).reshape(3, 5)
 
+    print(event, flush=True)
+    print(context, flush=True)
     response = {
         "statusCode": 200,
         "body": json.dumps({
