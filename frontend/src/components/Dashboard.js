@@ -1,17 +1,7 @@
 import React, { Component } from 'react';
 
 import {
-  Row,
-  Col,
-  Card,
-  CardHeader,
-  CardBody,
-  Progress,
-  Button
-} from 'reactstrap';
-
-import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend
 } from 'recharts';
 
 import {
@@ -19,28 +9,12 @@ import {
 } from 'recharts';
 
 import {
-  PieChart, Pie, Sector, Cell,
+  PieChart, Pie, Cell,
 } from 'recharts';
 
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
 } from 'recharts';
-
-const style = {
-  h1: {
-    marginTop: '3em',
-  },
-  h2: {
-    margin: '4em 0em 2em',
-  },
-  h3: {
-    marginTop: '2em',
-    padding: '2em 0em',
-  },
-  last: {
-    marginBottom: '300px',
-  },
-}
 
 
 const data = [
