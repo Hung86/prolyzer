@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, Link } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 
 
 class SearchUI extends React.Component {
@@ -16,11 +16,6 @@ class SearchUI extends React.Component {
     myChangeHandler = (event) => {
       this.setState({relevant_product: event.target.value});
 
-    }
-  
-    goSearch() {
-      alert("dadadasdasdasdas")
-      this.props.history.push('/dash/');
     }
 
     handleFormSubmit(e) {
