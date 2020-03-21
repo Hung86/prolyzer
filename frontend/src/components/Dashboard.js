@@ -19,7 +19,7 @@ import {
     Legend
 } from 'recharts';
 import Api from "../api";
-
+import {parse} from "querystring";
 
 const data = [
     {name: 'Page A', uv: 4000, pv: 2400, amt: 2400,},
@@ -74,12 +74,37 @@ const renderCustomizedLabel = ({cx, cy, midAngle, innerRadius, outerRadius, perc
 };
 
 class Dashboard extends Component {
-    componentDidMount() {
-        Api.prolyzer("pixel3a").then(console.log);
+    constructor(props) {
+        super(props);
+        this.state = {
+            prolyzer: null
+        };
     }
 
+    componentDidMount = async () => {
+        try {
+            const searchParamsPart = this.props.location.search;
+            if (searchParamsPart.split('?').length > 1 && !!parse(searchParamsPart.split('?')[1]).search) {
+                const {search} = parse(searchParamsPart.split('?')[1]);
+                const {data} = await Api.prolyzer(search);
+                this.setState({prolyzer: data});
+            } else {
+                throw new Error("Search param failed parsing.");
+            }
+        } catch (e) {
+            console.warn(e);
+            this.props.history.push("/");
+        }
+    };
+
     render() {
-        return (
+        const {prolyzer} = this.state;
+        console.log(prolyzer); // TODO @hung data is stored and updated here (i.e. this.state.prolyzer)
+        return !prolyzer ? (
+            <div className="container my-5">
+                <div className="text-center">Loading...</div>
+            </div>
+        ) : (
             <div>
                 <div>
                     <div className='child_div_1'>
