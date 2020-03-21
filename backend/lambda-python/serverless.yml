@@ -31,6 +31,7 @@ functions:
       - http:
           path: helloWorld
           method: get
+          cors: true
   prolyzerPython:
     name: ${{self:service}}-${{self:provider.stage}}-prolyzer
     description: 'Prolyzer for Python'
@@ -41,6 +42,7 @@ functions:
       - http:
          path: prolyzer
          method: get
+         cors: true
 
 custom:
   # Custom staging profiles. You may access or modify these credentials in ~/.aws/credentials

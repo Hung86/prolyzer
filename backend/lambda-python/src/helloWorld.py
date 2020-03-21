@@ -14,7 +14,11 @@ def hello_world(event, context):
         "body": json.dumps({
             "message": "Welcome to Prolyzer on Python. The time is " + datetime.now().isoformat(),
             "sampleNumpyArray": a.tolist()
-        })
+        }),
+        "headers": {
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Credentials": True,
+        }
     }
 
     return response
