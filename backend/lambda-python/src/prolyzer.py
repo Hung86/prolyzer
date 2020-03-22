@@ -5,6 +5,7 @@ import tweepy as twp
 import re
 from ibm_watson import ToneAnalyzerV3
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+import mysql.connector
 #import preprocessor as p
 
 def prolyzer(event, context):
@@ -29,6 +30,15 @@ def prolyzer(event, context):
 
 	tone_analyzer.set_disable_ssl_verification(True)
 
+	mydb = mysql.connector.connect(
+	host="prolyzer-rds-production.cr28byc2iyut.ap-southeast-1.rds.amazonaws.com",
+	user="admin",
+	passwd="password",
+	database="prolyzer"
+	)
+
+	mycursor = mydb.cursor()
+
 	#tweets = api.user_timeline()
 	#search_words = "#covid-19"
 	#date_since = "2019-12-20"
@@ -47,16 +57,20 @@ def prolyzer(event, context):
 	{'text': totalTweets},
 	content_type='application/json'
 	).get_result()
+	
+	sql = "INSERT INTO results (search_term,tweets,results) VALUES (%s, %s, %s)"
+	val = (search_words,str(totalTweets),str(tone_analysis))
+	mycursor.execute(sql, val)
+
+	mydb.commit()
+	mycursor.close()
+	mydb.close()
 
 	response = {
 		"statusCode": 200,
 		"body": json.dumps({
 			"tone_response": tone_analysis
-		}),
-		"headers": {
-			"Access-Control-Allow-Origin": "*",
-			"Access-Control-Allow-Credentials": True,
-		}
+		})
 	}
 
 	return response
