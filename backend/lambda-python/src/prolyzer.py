@@ -6,6 +6,7 @@ import re
 from ibm_watson import ToneAnalyzerV3
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 import mysql.connector
+import urllib.parse
 #import preprocessor as p
 
 def prolyzer(event, context):
@@ -42,7 +43,7 @@ def prolyzer(event, context):
 	#tweets = api.user_timeline()
 	#search_words = "#covid-19"
 	#date_since = "2019-12-20"
-	search_words = searchTerm
+	search_words = urllib.parse.quote(searchTerm)
 
 	totalTweets = ''
 	# Collect tweets
