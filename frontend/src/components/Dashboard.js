@@ -1,23 +1,6 @@
 import React, { Component } from 'react';
 
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend
-} from 'recharts';
-
-import {
-  BarChart, Bar
-} from 'recharts';
-
-import {
-  PieChart, Pie, Cell,
-} from 'recharts';
-
-import {
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-} from 'recharts';
-
-import React, {Component} from 'react';
-import {
     Radar,
     RadarChart,
     PolarGrid,
