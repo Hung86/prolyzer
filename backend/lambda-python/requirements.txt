@@ -1,3 +1,5 @@
 numpy==1.18.1
 ibm_watson==4.3.0
 tweepy==3.8.0
+wheel==0.34.2
+mysql-connector-python-rf==2.2.2
