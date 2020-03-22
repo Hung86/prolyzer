@@ -52,7 +52,11 @@ def prolyzer(event, context):
 		"statusCode": 200,
 		"body": json.dumps({
 			"tone_response": tone_analysis
-		})
+		}),
+		"headers": {
+			"Access-Control-Allow-Origin": "*",
+			"Access-Control-Allow-Credentials": True,
+		}
 	}
 
 	return response
