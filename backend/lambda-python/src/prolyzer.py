@@ -7,7 +7,7 @@ from ibm_watson import ToneAnalyzerV3
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 import mysql.connector
 import urllib.parse
-#import preprocessor as p
+
 
 def prolyzer(event, context):
 	searchTerm = event["queryStringParameters"]['search']
@@ -40,17 +40,13 @@ def prolyzer(event, context):
 
 	mycursor = mydb.cursor()
 
-	#tweets = api.user_timeline()
-	#search_words = "#covid-19"
-	#date_since = "2019-12-20"
-	search_words = urllib.parse.quote(searchTerm)
+	search_words = searchTerm
 
 	totalTweets = ''
 	# Collect tweets
 	tweets = twp.Cursor(api.search,q=search_words,lang="en").items(100)
-	#p.set_options(p.OPT.URL,p.OPT.MENTION,p.OPT.HASHTAG,p.OPT.RESERVED,p.OPT.NUMBER)
+
 	for tweet in tweets:
-		#totalTweets = totalTweets + p.clean(tweet.text)+ '\n'
 		totalTweets = totalTweets + ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) |(\w+:\/\/\S+)", " ", tweet.text).split())
 
 	print(totalTweets)
