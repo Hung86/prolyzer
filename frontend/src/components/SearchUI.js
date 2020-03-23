@@ -1,5 +1,4 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom'
 import {stringify} from 'querystring';
 
 class SearchUI extends React.Component {

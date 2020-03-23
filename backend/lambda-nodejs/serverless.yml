@@ -40,7 +40,7 @@ resources:
     HelloWorldNodeLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
-        RetentionInDays: 30
+        RetentionInDays: 7
 
 # See Link for functions documentation:
 #     https://serverless.com/framework/docs/providers/aws/guide/functions/
