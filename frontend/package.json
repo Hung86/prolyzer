@@ -39,10 +39,12 @@
     ]
   },
   "devDependencies": {
+    "aws-sdk": "^2.641.0",
     "cross-env": "^7.0.0",
     "serverless": "^1.65.0",
     "serverless-cloudformation-changesets": "0.0.2",
     "serverless-iam-roles-per-function": "^2.0.2",
-    "serverless-single-page-app-plugin": "file:./serverless-single-page-app-plugin"
+    "serverless-single-page-app-plugin": "file:./serverless-single-page-app-plugin",
+    "shelljs": "^0.8.3"
   }
 }

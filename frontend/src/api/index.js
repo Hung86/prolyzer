@@ -1,8 +1,12 @@
 import axios from "axios";
 
+const API_URL = process.env.NODE_ENV === 'production'
+    ? process.env.REACT_APP_API_URL
+    : 'http://localhost:8080';
+
 export default class Api {
     static axiosInstance = axios.create({
-        baseURL: 'https://8lfgp7w038.execute-api.ap-southeast-1.amazonaws.com/production/',
+        baseURL: `${API_URL}/`,
         timeout: 30000
     });
 

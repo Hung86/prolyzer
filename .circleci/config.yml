@@ -7,6 +7,11 @@ version: 2.1
 defaults: &config_project_defaults
   working_directory: ~/repo
 
+master_only: &master_only
+  filters:
+    branches:
+      only: master
+
 executors:
   node_python_default:
     docker:
@@ -50,23 +55,26 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/lambda-nodejs/package-lock.json" }}-{{ checksum "backend/lambda-python/package-lock.json" }}-{{ .Revision }}
-            - v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/lambda-nodejs/package-lock.json" }}-{{ checksum "backend/lambda-python/package-lock.json" }}
+            - v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ .Revision }}
+            - v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}
             - v1-{{ arch }}-{{ .Branch }}
             - v1-{{ arch }}
       - run:
           working_directory: ~/repo/backend
-          command: npm run install-all
+          command: npm install
       - configure_aws
       - save_cache:
           paths:
             - ~/repo/backend/node_modules
-            - ~/repo/backend/lambda-nodejs/node_modules
-            - ~/repo/backend/lambda-python/node_modules
-          key: v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ checksum "backend/lambda-nodejs/package-lock.json" }}-{{ checksum "backend/lambda-python/package-lock.json" }}-{{ .Revision }}
+          key: v1-{{ arch }}-{{ .Branch }}-{{ checksum "backend/package-lock.json" }}-{{ .Revision }}
+      - run:
+          name: Setup dependent environment variables from default VPC
+          working_directory: ~/repo/backend
+          command: |
+            echo "export DEFAULT_VPC_ID=$(node ~/repo/backend/vpc.js vpc)" >> $BASH_ENV
       - run:
           working_directory: ~/repo/backend
-          command: npm run deploy-all
+          command: npm run deploy
 
   frontend:
     <<: *config_project_defaults
@@ -87,6 +95,14 @@ jobs:
           paths:
             - ~/repo/frontend/node_modules
           key: v1-{{ arch }}-{{ .Branch }}-{{ checksum "frontend/package-lock.json" }}-{{ .Revision }}
+      - run:
+          name: Setup API URL from pre-existing stack
+          working_directory: ~/repo/frontend
+          command: |
+            echo "export REACT_APP_API_URL=$(node ~/repo/frontend/env.js prolyzer-backend-production ServiceEndpoint)" >> $BASH_ENV
+      - run:
+          name: Debug Environment
+          command: echo $REACT_APP_API_URL
       - test_build_frontend
       - run:
           working_directory: ~/repo/frontend
@@ -100,12 +116,8 @@ workflows:
   master_flow:
     jobs:
       - backend:
-          filters:
-            branches:
-              only:
-                - master
+          <<: *master_only
       - frontend:
-          filters:
-            branches:
-              only:
-                - master
+          <<: *master_only
+          requires:
+            - backend
