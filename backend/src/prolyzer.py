@@ -56,7 +56,7 @@ def prolyzer(event, context):
 
     for tweet in tweets:
         total_tweets = total_tweets + ' '.join(
-            re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) |(\w+:\/\/\S+)", " ", tweet.text).split())
+            re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) |(\w+:\/\/\S+)", " ", tweet.full_text).split())
         hashtags = tweet.entities['hashtags']
         thashtag = ''
         for hashtag in hashtags:   
