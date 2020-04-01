@@ -96,7 +96,7 @@ def prolyzer(event, context):
 
     print("Inserting into database")
     sql1 = "INSERT INTO resultsdump (search_term,tweetsdump,resultsdump,created_at) VALUES (%s, %s, %s, %s)"
-    val1 = (search_words,str(totalTweets),str(tone_analysis),now)
+    val1 = (search_words,str(total_tweets),str(tone_analysis),now)
     mycursor.execute(sql1, val1)
 
     sql2 = "INSERT INTO results (search_term,score1,toneid1,tonename1,score2,toneid2,tonename2,user,created_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
