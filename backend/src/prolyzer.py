@@ -12,8 +12,7 @@ import time
 
 def prolyzer(event, context):
     print("")
-    #search_term = event["queryStringParameters"]['search']
-    search_term = "covid"
+    search_term = event["queryStringParameters"]['search']
 
     consumer_key = 'k7bmKlFjUf3eyFcwpqi1D34aZ'
     consumer_secret = 'l4u0IRz5AYt9HXThR5lWTN41dTX5UMrs3VmZnmNPZky1mJmf7M'
