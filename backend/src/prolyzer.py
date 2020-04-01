@@ -57,14 +57,20 @@ def prolyzer(event, context):
     for tweet in tweets:
         total_tweets = total_tweets + ' '.join(
             re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) |(\w+:\/\/\S+)", " ", tweet.full_text).split())
+        latitude = ''
+        longtitude = ''
+        if tweet.geo:
+            latitude = tweet.geo.get('coordinates')[0]
+            longtitude = tweet.geo.get('coordinates')[1]
         hashtags = tweet.entities['hashtags']
         thashtag = ''
         for hashtag in hashtags:   
             thashtag = thashtag + hashtag['text'] + ","
         if thashtag.endswith(","):
             thashtag = thashtag[:-1]
-        sql = "INSERT INTO tweets (search_term,full_text,geo,userlocation,hashtags,created_at) VALUES (%s, %s, %s, %s, %s, %s)"
-        val = (search_words,tweet.full_text,tweet.geo,tweet.user.location,thashtag,now)
+        #print(thashtag)
+        sql = "INSERT INTO tweets (search_term,full_text,lat,lon,userlocation,hashtags,created_at) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        val = (search_words,tweet.full_text,latitude,longtitude,tweet.user.location,thashtag,now)
         mycursor.execute(sql, val)
 
     print(total_tweets)
