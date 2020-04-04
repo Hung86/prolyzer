@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import logo from "../banner_logo.png";
 
 class NavBar extends Component {
     render() {
@@ -6,7 +7,7 @@ class NavBar extends Component {
           <nav className="navbar" role="navigation" aria-label="main navigation">
             <div className="navbar-brand">
               <a className="navbar-item" href="/">
-                <img src="Prolyzer-logo.png" alt="Prolyzer logo" />
+                <img src={logo} style={{height: 48}} alt="Prolyzer" />
               </a>
             </div>
             <div id="buttons_id" className="navbar-menu">
