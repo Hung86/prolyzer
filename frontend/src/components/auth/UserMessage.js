@@ -10,7 +10,7 @@ class MessageUI extends Component {
 
     handleFormSubmit = e => {
         e.preventDefault();
-        let button_id = e.target.id;
+        // let button_id = e.target.id;
         this.props.history.push('/');
     };
 

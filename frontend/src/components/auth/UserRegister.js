@@ -11,7 +11,7 @@ class UserRegister extends Component {
         e.preventDefault();
         let button_id = e.target.id;
         console.log(button_id);
-        if (button_id == 'btn_ok') {
+        if (button_id === 'btn_ok') {
             // TO DO
             this.props.history.push('/message');
         } else {
