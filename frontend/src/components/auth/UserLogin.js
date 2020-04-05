@@ -1,25 +1,54 @@
 import React, { Component } from 'react';
+import {Auth} from "aws-amplify"
+import ErrorMsg from './ErrorMsg';
+import {validateField,
+        clearStateError} from '../utils/UtilFunc';
 
 class UserRegister extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            username: "",
+            password: "",
+            errors: {
+              cognito_msg: "",
+              blank_field: []
+            }
         };
     }
 
-    handleFormSubmit = e => {
+    handleFormSubmit = async e => {
         e.preventDefault();
         let button_id = e.target.id;
         console.log(button_id);
-        if (button_id == 'btn_ok') {
-            // TO DO
-            this.props.history.push('/');
-        } else {
-            this.props.history.push('/');
+        clearStateError(this.state);
+        try {
+            if (button_id == 'btn_ok') {
+                const signInRes = await Auth.signIn(this.state.username, this.state.password)
+                console.log(signInRes);
+                this.props.appAuth.setUser(signInRes)
+                this.props.history.push('/');
+            } else {
+                this.props.history.push('/');
+            }
+        } catch (error) {
+            console.log(error);
+            let error_msg = "";
+            !error.message ? error_msg = error : error_msg = error.message;
+            this.setState({
+              errors: {
+                cognito_msg: error_msg
+              }
+            });
         }
 
 
+
     };
+
+    onInputChange = e => {
+        this.setState({[e.target.id]: e.target.value});
+      };
 
     render() {
         return (
@@ -27,6 +56,7 @@ class UserRegister extends Component {
             <form onSubmit={this.handleFormSubmit}>
             <div className="container">
               <h1>Login</h1>    
+                <ErrorMsg errors={this.state.errors} />
                 <div className="field">
                     <input 
                       className="input" 

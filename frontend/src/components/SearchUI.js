@@ -1,6 +1,5 @@
 import React from 'react';
 import {stringify} from 'querystring';
-import NavBar from './NavBar';
 
 class SearchUI extends React.Component {
     constructor(props) {
@@ -32,7 +31,6 @@ class SearchUI extends React.Component {
     render() {
         return (
             <div className='App'>
-                <NavBar />
                 <form onSubmit={this.handleFormSubmit}>
                     <h1>Welcome come to Prolyzer</h1>
                     <p className="text-muted">Prolyzer tagline, instructions and description here</p>

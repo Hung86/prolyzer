@@ -1,7 +1,18 @@
 import React, { Component } from 'react';
+import {Auth} from "aws-amplify";
 
 class NavBar extends Component {
-    render() {
+  logOut = async e => {
+    e.preventDefault();
+    try {
+      Auth.signOut();
+      this.props.appAuth.setUser(null);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  render() {
         return (
           <nav className="navbar" role="navigation" aria-label="main navigation">
             <div className="navbar-brand">
@@ -14,19 +25,32 @@ class NavBar extends Component {
                 <div className="navbar-item">
                   <div className="buttons">
                       <div>
-                      <a href="/register" className="button is-primary">
-                        <strong>Register</strong>
-                      </a>
-                      <a href="/login" className="button is-light">
-                        Log in
-                      </a>
+                      { !this.props.appAuth.getUser() ? (
+                          <div>
+                            <a href="/register" className="button is-primary">
+                              <strong>Register</strong>
+                            </a>
+                            <a href="/login" className="button is-light">
+                              Login
+                            </a>
+                          </div>
+                        ):(
+                          <div>
+                            <a href="/register" className="button is-primary">
+                              Hi <strong>{this.props.appAuth.getUser().username}</strong>
+                            </a>
+                            <a href="/" onClick={this.logOut} className="button is-light">
+                              Logout
+                            </a>
+                          </div>
+                        )}
                       </div>
                   </div>
                 </div>
               </div>
             </div>
         </nav>
-        );
+        )
     }
 }
 
