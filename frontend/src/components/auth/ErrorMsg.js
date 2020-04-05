@@ -18,7 +18,7 @@ export default function ErrorMsg(props) {
             </div> 
 
           );
-    } else if (props.errors.cognito_msg != "") {
+    } else if (props.errors.cognito_msg !== "") {
         return (
             <div className="text-danger container">
               <div className="row justify-content-center">

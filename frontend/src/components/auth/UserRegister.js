@@ -27,7 +27,7 @@ class UserRegister extends Component {
         let button_id = e.target.id;
         console.log(button_id);
         clearStateError(this.state);
-        if (button_id == 'btn_ok') {
+        if (button_id === 'btn_ok') {
           if (validateField(this)) {
             try {
               const {username, email, password} = this.state;

@@ -1,41 +1,50 @@
  function validateField(obj) {
-     let hasError = true;
-     let blank_field_array = []
-    if (obj.state.hasOwnProperty("username") && obj.state.username == "") {
+     let isOk = true;
+     let blank_field_array = [];
+     let is_password_notmatch = false;
+    if (obj.state.hasOwnProperty("username") && obj.state.username === "") {
         blank_field_array.push("Username");
-        hasError = false;
+        isOk = false;
     }
-    if (obj.state.hasOwnProperty("email") && obj.state.email == "") {
+    if (obj.state.hasOwnProperty("email") && obj.state.email === "") {
         blank_field_array.push("Email");
-        hasError = false;
+        isOk = false;
     }
     
-    if (obj.state.hasOwnProperty("password") && obj.state.password == "") {
+    if (obj.state.hasOwnProperty("password") && obj.state.password === "") {
         blank_field_array.push("Password");
-        hasError = false;
+        isOk = false;
     }
-    if (obj.state.hasOwnProperty("confirm_password") && obj.state.confirm_password == "") {
+    if (obj.state.hasOwnProperty("confirm_password") && obj.state.confirm_password === "") {
         blank_field_array.push("Confirm password");
-        hasError = false;
+        isOk = false;
     }
 
-    if (blank_field_array.length > 0) {
-        obj.setState({errors : {
-            ...obj.state.errors,
-            blank_field : blank_field_array
-        }});
-    }
     if (obj.state.hasOwnProperty("password") &&
         obj.state.hasOwnProperty("confirm_password") &&
-        obj.state.password != obj.state.confirm_password
+        obj.state.password !== obj.state.confirm_password
       )  {
-        obj.setState({errors : {
-            ...obj.state.errors,
-            password_notmatch : true 
-        }});
-        hasError = false;
+        is_password_notmatch = true;
+
+        isOk = false;
       }
-      return hasError;
+
+      if (!isOk) {
+          if (is_password_notmatch) {
+            obj.setState({errors : {
+                ...obj.state.errors,
+                blank_field : blank_field_array,
+                password_notmatch : is_password_notmatch
+            }});
+          } else {
+            obj.setState({errors : {
+                ...obj.state.errors,
+                blank_field : blank_field_array
+            }});
+          }
+
+      }
+      return isOk;
 }
 
  function clearStateError(state) {

@@ -8,7 +8,6 @@ import NotFoundPage from "./components/NotFoundPage";
 import UserRegister from './components/auth/UserRegister';
 import UserMessage from './components/auth/UserMessage.js';
 import UserLogin from './components/auth/UserLogin';
-import NavBar from './components/NavBar';
 
 import {Auth} from "aws-amplify"
 
