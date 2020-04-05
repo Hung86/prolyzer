@@ -21,7 +21,6 @@ class UserRegister extends Component {
         e.preventDefault();
         let button_id = e.target.id;
         console.log(button_id);
-<<<<<<< HEAD
         clearStateError(this.state);
         try {
             if (button_id == 'btn_ok') {
@@ -38,20 +37,11 @@ class UserRegister extends Component {
             !error.message ? error_msg = error : error_msg = error.message;
             this.setState({
               errors: {
+                ...this.state.errors,
                 cognito_msg: error_msg
               }
             });
-=======
-        if (button_id === 'btn_ok') {
-            // TO DO
-            this.props.history.push('/');
-        } else {
-            this.props.history.push('/');
->>>>>>> 2a3b65f0648a9d1a75343f9a62084ea09d9f1aee
         }
-
-
-
     };
 
     onInputChange = e => {
