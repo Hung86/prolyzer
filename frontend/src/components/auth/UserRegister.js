@@ -26,8 +26,18 @@ class UserRegister extends Component {
         e.preventDefault();
         let button_id = e.target.id;
         console.log(button_id);
+<<<<<<< HEAD
         clearStateError(this.state);
         console.log("----- error error------------------------")
+=======
+        if (button_id === 'btn_ok') {
+            // TO DO
+            this.props.history.push('/message');
+        } else {
+            this.props.history.push('/');
+        }
+
+>>>>>>> 2a3b65f0648a9d1a75343f9a62084ea09d9f1aee
 
         if (!validateField(this)) {
             console.log("----- error error")
