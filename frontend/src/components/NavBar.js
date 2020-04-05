@@ -3,8 +3,18 @@ import {Auth} from "aws-amplify";
 import logo from "../banner_logo.png";
 
 class NavBar extends Component {
-  logOut = async e => {
-    e.preventDefault();
+  logIn = e => {
+    //e.preventDefault();
+    console.log(" Invoked Navbar::LogIn");
+  }
+  register = e => {
+    //e.preventDefault();
+    console.log(" Invoked Navbar::Register");
+  }
+
+  logOut = e => {
+    //e.preventDefault();
+    console.log(" Invoked Navbar::LogOut");
     try {
       Auth.signOut();
       this.props.appAuth.setUser(null);
@@ -28,10 +38,10 @@ class NavBar extends Component {
                       <div>
                       { !this.props.appAuth.getUser() ? (
                           <div>
-                            <a href="/register" className="button is-primary">
+                            <a href="/register" onClick={this.register} className="button is-primary">
                               <strong>Register</strong>
                             </a>
-                            <a href="/login" className="button is-light">
+                            <a href="/login" onClick={this.logIn} className="button is-light">
                               Login
                             </a>
                           </div>

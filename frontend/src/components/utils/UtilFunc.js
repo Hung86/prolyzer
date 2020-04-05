@@ -1,35 +1,30 @@
  function validateField(obj) {
      let hasError = true;
+     let blank_field_array = []
     if (obj.state.hasOwnProperty("username") && obj.state.username == "") {
-        obj.setState({errors : {
-            ...obj.state.errors,
-            blank_field : [...obj.state.errors.blank_field, "Username"]
-        }});
+        blank_field_array.push("Username");
         hasError = false;
     }
     if (obj.state.hasOwnProperty("email") && obj.state.email == "") {
-        obj.setState({errors : {
-            ...obj.state.errors,
-            blank_field : [...obj.state.errors.blank_field, "Email"]
-        }});
+        blank_field_array.push("Email");
         hasError = false;
     }
     
     if (obj.state.hasOwnProperty("password") && obj.state.password == "") {
-        obj.setState({errors : {
-            ...obj.state.errors,
-            blank_field : [...obj.state.errors.blank_field, "Password"]
-        }});
+        blank_field_array.push("Password");
         hasError = false;
     }
     if (obj.state.hasOwnProperty("confirm_password") && obj.state.confirm_password == "") {
-        obj.setState({errors : {
-            ...obj.state.errors,
-            blank_field : [...obj.state.errors.blank_field, "confirm password"]
-        }});
+        blank_field_array.push("Confirm password");
         hasError = false;
     }
 
+    if (blank_field_array.length > 0) {
+        obj.setState({errors : {
+            ...obj.state.errors,
+            blank_field : blank_field_array
+        }});
+    }
     if (obj.state.hasOwnProperty("password") &&
         obj.state.hasOwnProperty("confirm_password") &&
         obj.state.password != obj.state.confirm_password

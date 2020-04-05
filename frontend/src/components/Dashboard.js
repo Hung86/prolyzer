@@ -21,6 +21,8 @@ import {
 } from 'recharts';
 import Api from "../api";
 import {parse} from "querystring";
+import NavBar from './NavBar';
+
 
 const data = [
     {name: 'Page A', uv: 4000, pv: 2400, amt: 2400,},
@@ -107,6 +109,7 @@ class Dashboard extends Component {
             </div>
         ) : (
             <div>
+                <NavBar appAuth={this.props.appAuth}/>
                 <div>
                     <div className='child_div_1'>
                         <LineChart width={500} height={300} data={data}>

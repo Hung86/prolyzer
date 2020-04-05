@@ -18,7 +18,7 @@ export default class App extends Component {
         super(props);
         this.state = {
             user: null,
-            isAuthenticatedChecking: true
+            isAuthenticatedChecking: true,
         };
     }
 
@@ -31,6 +31,7 @@ export default class App extends Component {
     }
 
     componentDidMount = async () => {
+        console.log("invoke App:componentDidMount");
         try {
             const session = await Auth.currentSession();
             const user_login = await Auth.currentAuthenticatedUser();
@@ -43,17 +44,15 @@ export default class App extends Component {
     }
 
     render() {
-        console.log("invoke App:render");
+        const {isAuthenticatedChecking} = this.state
         const authProps = {
             getUser: this.getUser,
             setUser: this.setUser
         }
 
-        const {isAuthenticatedChecking} = this.state
         return (
             !isAuthenticatedChecking &&
             <BrowserRouter>
-                <NavBar appAuth={authProps}/>
                 <Switch>
                     <Route path="/" exact render={(props) => <SearchUI {...props} appAuth={authProps}/>} /> {/*start default url with search UI*/}
                     <Route path="/register" exact render={(props) => <UserRegister {...props} appAuth={authProps}/>}/> {/*start default url with Register UI*/}
