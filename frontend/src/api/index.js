@@ -3,6 +3,7 @@ import axios from "axios";
 const API_URL = process.env.NODE_ENV === 'production'
     ? process.env.REACT_APP_API_URL
     : 'http://localhost:8080';
+    
 
 export default class Api {
     static axiosInstance = axios.create({
@@ -22,4 +23,8 @@ export default class Api {
     // static getUri = Api.axiosInstance.getUri;
 
     static prolyzer = (search) => Api.axiosInstance.get('/prolyzer', {params: {search}});
+    static prolyzer = (search, user) => Api.axiosInstance.get('/prolyzer', {params: {search, user}});
+    static prolyzer_user_history = (user) => Api.axiosInstance.get('/dbuser', {params: {user}});
+
+
 }

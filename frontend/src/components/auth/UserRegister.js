@@ -13,7 +13,7 @@ class UserRegister extends Component {
           username: "",
           email: "",
           password: "",
-          confirm_password: "",
+          confirmpassword: "",
           errors: {
             cognito_msg: "",
             blank_field: [],
@@ -75,7 +75,6 @@ class UserRegister extends Component {
                       className="input" 
                       type="text"
                       id="username"
-                      aria-describedby="userNameHelp"
                       placeholder="Username"
                       value={this.state.username}
                       onChange={this.onInputChange}
@@ -86,7 +85,6 @@ class UserRegister extends Component {
                       className="input" 
                       type="email"
                       id="email"
-                      aria-describedby="emailHelp"
                       placeholder="Email"
                       value={this.state.email}
                       onChange={this.onInputChange}
@@ -110,7 +108,7 @@ class UserRegister extends Component {
                       type="password"
                       id="confirmpassword"
                       placeholder="Confirm password"
-                      value={this.state.confirm_password}
+                      value={this.state.confirmpassword}
                       onChange={this.onInputChange}
                     />
     

@@ -15,14 +15,14 @@
         blank_field_array.push("Password");
         isOk = false;
     }
-    if (obj.state.hasOwnProperty("confirm_password") && obj.state.confirm_password === "") {
+    if (obj.state.hasOwnProperty("confirmpassword") && obj.state.confirmpassword === "") {
         blank_field_array.push("Confirm password");
         isOk = false;
     }
 
     if (obj.state.hasOwnProperty("password") &&
-        obj.state.hasOwnProperty("confirm_password") &&
-        obj.state.password !== obj.state.confirm_password
+        obj.state.hasOwnProperty("confirmpassword") &&
+        obj.state.password !== obj.state.confirmpassword
       )  {
         is_password_notmatch = true;
 
