@@ -109,6 +109,17 @@ def prolyzer(event, context):
     sql2 = "INSERT INTO results (search_term,score1,toneid1,tonename1,score2,toneid2,tonename2,user,created_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
     val2 = (search_words,score1,toneid1,tonename1,score2,toneid2,tonename2,user,now)
     mycursor.execute(sql2, val2)
+    
+    data = {}
+    data['search_term'] = search_words
+    data['score1'] = score1
+    data['toneid1'] = toneid1
+    data['tonename1'] = tonename1
+    data['score2'] = score2
+    data['toneid2'] = toneid2
+    data['tonename2'] = tonename2
+    data['user'] = user
+    data['created_at'] = now
 
     mydb.commit()
     mycursor.close()
@@ -119,7 +130,7 @@ def prolyzer(event, context):
     response = {
         "statusCode": 200,
         "body": json.dumps({
-            "tone_response": tone_analysis
+            "tone_response": data
         }),
         "headers": {
             "Access-Control-Allow-Origin": '*',
