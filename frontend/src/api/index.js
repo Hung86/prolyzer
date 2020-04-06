@@ -21,7 +21,6 @@ export default class Api {
     // static patch = Api.axiosInstance.patch;
     // static getUri = Api.axiosInstance.getUri;
 
-    static prolyzer = (search) => Api.axiosInstance.get('/prolyzer', {params: {search}});
-    static prolyzer = (search, user) => Api.axiosInstance.get('/prolyzer', {params: {search, user}});
+    static prolyzer = (search, user) => Api.axiosInstance.get('/prolyzer', {params: {search, user: user || "anonymous"}});
     static prolyzer_user_history = (user) => Api.axiosInstance.get('/dbuser', {params: {user}});
 }

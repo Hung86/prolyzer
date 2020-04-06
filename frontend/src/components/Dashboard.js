@@ -28,27 +28,13 @@ const data4 = [
 ];
 
 const stack_bar_chart_sampe = [
-    {
-      name: 'Page A', Anger: 4000, Fear: 2400, Joy: 2400,
-    },
-    {
-      name: 'Page B', Anger: 3000, Fear: 1398, Joy: 2210,
-    },
-    {
-      name: 'Page C', Anger: 2000, Fear: 9800, Joy: 2290,
-    },
-    {
-      name: 'Page D', Anger: 2780, Fear: 3908, Joy: 2000,
-    },
-    {
-      name: 'Page E', Anger: 1890, Fear: 4800, Joy: 2181,
-    },
-    {
-      name: 'Page F', Anger: 2390, Fear: 3800, Joy: 2500,
-    },
-    {
-      name: 'Page G', Anger: 3490, Fear: 4300, Joy: 0,
-    },
+    {name: 'Page A', Anger: 4000, Fear: 2400, Joy: 2400,},
+    {name: 'Page B', Anger: 3000, Fear: 1398, Joy: 2210,},
+    {name: 'Page C', Anger: 2000, Fear: 9800, Joy: 2290,},
+    {name: 'Page D', Anger: 2780, Fear: 3908, Joy: 2000,},
+    {name: 'Page E', Anger: 1890, Fear: 4800, Joy: 2181,},
+    {name: 'Page F', Anger: 2390, Fear: 3800, Joy: 2500,},
+    {name: 'Page G', Anger: 3490, Fear: 4300, Joy: 0,},
   ];
 
 
@@ -72,7 +58,9 @@ class Dashboard extends Component {
                     let history_res = await Api.prolyzer_user_history(user.username);
                     data = {'tone' : tone_res.data['tone_response'], 'history' : history_res.data['db_response']};
                 } else {
-                    data = await Api.prolyzer(search);
+                    let tone_res = await Api.prolyzer(search, "anonymous");
+                    let history_res = await Api.prolyzer_user_history("anonymous");
+                    data = {'tone' : tone_res.data['tone_response'], 'history' : history_res.data['db_response']};
                 }
                 this.setState({prolyzer: data});
             } else {
@@ -86,16 +74,13 @@ class Dashboard extends Component {
 
     render() {
         const {prolyzer} = this.state;
-        console.log(prolyzer); // TODO @hung data is stored and updated here (i.e. this.state.prolyzer)
+        console.log(prolyzer);
 
-        
         let radar_chart_data = [];
         let stack_chart_data = [];
         let search_term = "";
-        if (prolyzer && this.props.appAuth.getUser()) {
-            let tones = {
-                'Anger' : 0.5, 'Fear' : 0.5, 'Joy' : 0.5, 'Sadness' : 0.5, 'Analytical' : 0.5, 'Confident' : 0.5, 'Tentative' : 0.5
-            }
+        if (prolyzer) {
+            let tones = {Anger: 0.1, Fear: 0.1, Joy: 0.1, Sadness: 0.1, Analytical: 0.1, Confident: 0.1, Tentative: 0.1};
             search_term = prolyzer['tone']["search_term"];
             let tone1 = prolyzer['tone']['tonename1'];
             let tone2 = prolyzer['tone']['tonename2'];
@@ -154,8 +139,7 @@ class Dashboard extends Component {
                 
                 <div align="center" >
                 <h1>{search_term}</h1>
-
-                    <RadarChart cx={280} cy={250} outerRadius={250} width={600} height={600} data={radar_chart_data}>
+                    <RadarChart cx={300} cy={260} outerRadius={225} width={600} height={520} data={radar_chart_data}>
                         <PolarGrid/>
                         <PolarAngleAxis dataKey="subject"/>
                         <PolarRadiusAxis/>
@@ -163,7 +147,7 @@ class Dashboard extends Component {
                     </RadarChart>
                 </div>
                 <div align="center">
-                <h1>{this.props.appAuth.getUser() ? this.props.appAuth.getUser().username + " analyzed with prolyzer in the past" : ""}</h1>
+                <h1>Past Analyses:</h1>
 
                     <BarChart
                         width={1000}
