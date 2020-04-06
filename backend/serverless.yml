@@ -156,6 +156,20 @@ functions:
     environment:
       TABLE_NAME: ${{env:PROLYZER_DB_SCHEMA}}
       DB_ENDPOINT: !GetAtt [ProlyzerMySqlRDSInstance, Endpoint.Address]
+  dbusersearch:
+    name: ${{self:service}}-${{self:provider.stage}}-dbusersearch
+    description: 'DB User and Search'
+    handler: src/dbusersearch.handler
+    timeout: 30
+    memorySize: 128
+    events:
+      - http:
+         path: dbusersearch
+         method: get
+         cors: true
+    environment:
+      TABLE_NAME: ${{env:PROLYZER_DB_SCHEMA}}
+      DB_ENDPOINT: !GetAtt [ProlyzerMySqlRDSInstance, Endpoint.Address]
 
 custom:
   # Custom staging profiles. You may access or modify these credentials in ~/.aws/credentials
