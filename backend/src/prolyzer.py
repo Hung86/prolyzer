@@ -13,6 +13,7 @@ import time
 def prolyzer(event, context):
     print("")
     search_term = event["queryStringParameters"]['search']
+    user = event["queryStringParameters"]['user']
 
     consumer_key = 'k7bmKlFjUf3eyFcwpqi1D34aZ'
     consumer_secret = 'l4u0IRz5AYt9HXThR5lWTN41dTX5UMrs3VmZnmNPZky1mJmf7M'
@@ -106,7 +107,7 @@ def prolyzer(event, context):
     mycursor.execute(sql1, val1)
 
     sql2 = "INSERT INTO results (search_term,score1,toneid1,tonename1,score2,toneid2,tonename2,user,created_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    val2 = (search_words,score1,toneid1,tonename1,score2,toneid2,tonename2,"test",now)
+    val2 = (search_words,score1,toneid1,tonename1,score2,toneid2,tonename2,user,now)
     mycursor.execute(sql2, val2)
 
     mydb.commit()
