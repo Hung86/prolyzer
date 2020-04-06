@@ -37,7 +37,7 @@ def dbuser(event, context):
         "statusCode": 200,
         "body": json.dumps({
             "tone_response": json_data
-        }),
+        },default=str),
         "headers": {
             "Access-Control-Allow-Origin": '*',
             "Access-Control-Allow-Credentials": True,
