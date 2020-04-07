@@ -22,7 +22,7 @@ def dbhashtagscount(event, context):
     mycursor = mydb.cursor()
     query = "SELECT hashtags,COUNT(*) as count FROM tweets WHERE search_term=" + "'" + searchTerm + "'" + " AND hashtags <>" + " '" + "'" + " GROUP BY hashtags ORDER BY count DESC"
     mycursor.execute(query)
-    row_headers=[x[0] for x in mycursor.description] #this will extract row headers
+    row_headers=[x[0] for x in mycursor.description]
     rv = mycursor.fetchall()
     json_data=[]
     for result in rv:
