@@ -6,17 +6,36 @@ import {
     PolarGrid,
     PolarAngleAxis,
     PolarRadiusAxis,
-    BarChart,
-    Bar,
+    LineChart,
+    Line,
     XAxis,
     YAxis,
     CartesianGrid,
     Tooltip,
     Legend
 } from 'recharts';
+
 import Api from "../api";
 import {parse} from "querystring";
 import NavBar from './NavBar';
+
+
+
+const toPercent = (decimal, fixed = 0) => `${(decimal).toFixed(fixed)}%`;
+
+class CustomizedAxisTick extends Component {
+  render() {
+    const {
+      x, y, payload,
+    } = this.props;
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text x={0} y={0} dy={16} textAnchor="end" fill="#666" fontSize={12} transform="rotate(-45)">{payload.value}</text>
+      </g>
+    );
+  }
+}
 
 const data4 = [
     {subject: 'Math', A: 0.1, fullMark: 1,},
@@ -42,6 +61,7 @@ class Dashboard extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isAuthenticated: false,
             prolyzer: null
         };
     }
@@ -55,14 +75,15 @@ class Dashboard extends Component {
                 let data;
                 if (user) {
                     let tone_res = await Api.prolyzer(search,user.username);
-                    let history_res = await Api.prolyzer_user_history(user.username);
-                    data = {'tone' : tone_res.data['tone_response'], 'history' : history_res.data['db_response']};
+                    let last_10_days_res = await Api.prolyzer_last_10_days(search,user.username)
+                    data = {'tone' : tone_res.data['tone_response'], 'history' : last_10_days_res.data['db_response']};
+                    this.setState({prolyzer: data, isAuthenticated: true});
                 } else {
                     let tone_res = await Api.prolyzer(search, "anonymous");
                     let history_res = await Api.prolyzer_user_history("anonymous");
                     data = {'tone' : tone_res.data['tone_response'], 'history' : history_res.data['db_response']};
+                    this.setState({prolyzer: data, isAuthenticated: false});
                 }
-                this.setState({prolyzer: data});
             } else {
                 throw new Error("Search param failed parsing.");
             }
@@ -73,7 +94,7 @@ class Dashboard extends Component {
     };
 
     render() {
-        const {prolyzer} = this.state;
+        const {prolyzer, isAuthenticated} = this.state;
         console.log(prolyzer);
 
         let radar_chart_data = [];
@@ -96,32 +117,33 @@ class Dashboard extends Component {
                 radar_chart_data.push({subject: key, A: tones[key], fullMark: 1});
                 return key;
               });
+            
+            if (prolyzer.hasOwnProperty("history")) {
+               // let valid_item = {};
+               let len = prolyzer["history"].length;
+               console.log("history length : " + len);
+               let start_idx = len - 20;
+               for (; start_idx < len; start_idx++) {
+                  let item = {'name': 'Page A', 'Anger': 0.0, 'Fear': 0.0, 'Joy': 0.0, 'Sadness': 0.0, 'Analytical': 0.0, 'Confident': 0.0, 'Tentative' : 0.0};
+                  let entry  = prolyzer["history"][start_idx];
+                  let created_at = entry['created_at'];
+                  console.log("day: " + created_at);  
 
-            let valid_item = {};
-            Object.keys(prolyzer["history"]).map(key => {
-                let item = {'name': 'Page A', 'Anger': 0.0, 'Fear': 0.0, 'Joy': 0.0, 'Sadness': 0.0, 'Analytical': 0.0, 'Confident': 0.0, 'Tentative' : 0.0};
-                let entry  = prolyzer["history"][key];
-                let searh_term = entry['search_term'];
-                if (searh_term !== "") {
-                    if(!valid_item.hasOwnProperty(searh_term)) {
-                        valid_item[searh_term] = 1;
-                        item["name"] = searh_term;
-                        let entry_tone1 = entry['tonename1'];
-                        let entry_tone2 = entry['tonename2'];
-                        if (entry_tone1 && entry_tone1 !== "null") {
-                            item[entry_tone1] = entry['score1'];
-    
-                        }
+                  item["name"] = created_at;
                 
-                        if (entry_tone2 && entry_tone2 !== "null") {
-                            item[entry_tone2] = entry['score2'];
-                        }
-                        stack_chart_data.push(item);
-                    } 
-                }
+                  let entry_tone1 = entry['tonename1'];
+                  let entry_tone2 = entry['tonename2'];
+                  if (entry_tone1 && entry_tone1 !== "null") {
+                      item[entry_tone1] = (entry['score1']*100).toFixed(2);
 
-            return key;
-            });
+                  }
+          
+                  if (entry_tone2 && entry_tone2 !== "null") {
+                      item[entry_tone2] = (entry['score2']*100).toFixed(2);
+                  }
+                  stack_chart_data.push(item);
+                }
+            }
 
         } else {
             radar_chart_data = data4;
@@ -146,31 +168,26 @@ class Dashboard extends Component {
                         <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6}/>
                     </RadarChart>
                 </div>
-                <div align="center">
+                {isAuthenticated &&
+                (<div align="center">
                 <h1>Past Analyses:</h1>
 
-                    <BarChart
-                        width={1000}
-                        height={500}
-                        data={stack_chart_data}
-                        margin={{
-                        top: 20, right: 30, left: 20, bottom: 5,
-                        }}
-                    >
+                    <LineChart width={1000} height={650} data={stack_chart_data}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis domain={[0, 3]}/>
-                        <Tooltip />
+                        <XAxis dataKey="name" height={110} interval={0}  tick={<CustomizedAxisTick />} padding={{ left: 30, right: 30 }}/>
+                        <YAxis domain={[0, 100]} tickFormatter={toPercent} />
+                        <Tooltip/>
                         <Legend />
-                        <Bar dataKey="Anger" stackId="a" fill="#FF0000" />
-                        <Bar dataKey="Fear" stackId="a" fill="#FE9A2E" />
-                        <Bar dataKey="Joy" stackId="a" fill="#00BFFF" />
-                        <Bar dataKey="Sadness" stackId="a" fill="#A4A4A4" />
-                        <Bar dataKey="Analytical" stackId="a" fill="#8904B1" />
-                        <Bar dataKey="Confident" stackId="a" fill="#01DFD7" />
-                        <Bar dataKey="Tentative" stackId="a" fill="#F7FE2E" />
-                    </BarChart>
-                </div>
+                        <Line type="monotone" dataKey="Anger"  stroke="#FF0000" />
+                        <Line type="monotone" dataKey="Fear"  stroke="#FE9A2E" />
+                        <Line type="monotone" dataKey="Joy"  stroke="#00BFFF" />
+                        <Line type="monotone" dataKey="Sadness"  stroke="#A4A4A4" />
+                        <Line type="monotone" dataKey="Analytical" stroke="#8904B1" />
+                        <Line type="monotone" dataKey="Confident"  stroke="#01DFD7" />
+                        <Line type="monotone" dataKey="Tentative" stroke="#FFCA33" />
+                    </LineChart>
+                </div>)
+                }
 
             </div>
         );

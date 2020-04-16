@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_URL = process.env.NODE_ENV === 'production'
     ? process.env.REACT_APP_API_URL
-    : 'http://localhost:8080';
+    : 'https://a5wmdtrzg7.execute-api.ap-southeast-1.amazonaws.com/production';
 
 export default class Api {
     static axiosInstance = axios.create({
@@ -20,7 +20,9 @@ export default class Api {
     // static put = Api.axiosInstance.put;
     // static patch = Api.axiosInstance.patch;
     // static getUri = Api.axiosInstance.getUri;
+    //https://a5wmdtrzg7.execute-api.ap-southeast-1.amazonaws.com/production/dbusersearch?user=tom&search=iphonex
 
     static prolyzer = (search, user) => Api.axiosInstance.get('/prolyzer', {params: {search, user: user || "anonymous"}});
     static prolyzer_user_history = (user) => Api.axiosInstance.get('/dbuser', {params: {user}});
+    static prolyzer_last_10_days = (search, user) => Api.axiosInstance.get('/dbusersearch', {params: {user, search}});
 }
