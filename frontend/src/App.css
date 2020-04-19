@@ -32,7 +32,7 @@ table {
   table-layout: fixed;
 }
 
-td {
+td, th {
   overflow:hidden;
   text-overflow: ellipsis;
 }

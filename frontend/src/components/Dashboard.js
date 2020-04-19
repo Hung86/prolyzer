@@ -314,19 +314,17 @@ class Dashboard extends Component {
 
                 </div>
                 <div align="center">
-                    <table width="40%">
+                    <table width="750">
                         <thead>
                             <tr>
-                                <th  width="10%">Index</th>
                                 <th>Hashtag Co-occurence Matrix</th> 
-                                <th   width="10%">Count</th>
+                                <th   width="15%">Count</th>
                             </tr>
                         </thead>
                         <tbody>
                             {
                                 composed_chart_data.map((hashtag_item, index)=>{
                                 return (<tr>
-                                            <td >{index}</td>
                                             <td>{hashtag_item['hashtags']}</td>
                                             <td >{hashtag_item['count']}</td>
                                         </tr>)
