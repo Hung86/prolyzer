@@ -367,8 +367,8 @@ class Dashboard extends Component {
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" height={110} interval={0}  tick={<CustomizedAxisTick />} label={{ value: 'Hashtags/Mentions', position: 'insideBottomRight', offset: 0 }}/>
-                        <YAxis  domain={[0, 'dataMax + 20']} tick={false} label={{ value: 'Count', angle: -90, position: 'insideLeft' }} />
+                        <XAxis dataKey="name" height={110} interval={0}  tick={<CustomizedAxisTick />}/>
+                        <YAxis  domain={[0, 'dataMax + 20']} tick={false}  />
                         <Tooltip />
                         <Legend />
                         {/* <Bar dataKey="count" stackId="a" fill="#00BFFF" /> */}
