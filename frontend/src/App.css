@@ -24,6 +24,19 @@
   margin-right: 5px;
 }
 
+table, th, td {
+  border: 1px solid black;
+}
+
+table {
+  table-layout: fixed;
+}
+
+td {
+  overflow:hidden;
+  text-overflow: ellipsis;
+}
+
 .child_div_2 {
   margin-right: 5px;
 }

@@ -2,7 +2,6 @@ import React from 'react';
 import {stringify} from 'querystring';
 import NavBar from './NavBar';
 
-
 class SearchUI extends React.Component {
     constructor(props) {
         super(props);
@@ -36,17 +35,17 @@ class SearchUI extends React.Component {
                 <NavBar appAuth={this.props.appAuth}/>
                 <div className='App'>
                     <form onSubmit={this.handleFormSubmit}>
-                        <h1>Welcome come to Prolyzer</h1>
+                        <h1>Welcome to Prolyzer</h1>
                         <p className="text-muted">Prolyzer tagline, instructions and description here</p>
                         <div>
-                            <p>Enter a search query:</p>
+                            <label>Enter a search query:</label>
                             <input
                                     type='text'
                                     id="in_search"
                                     onChange={this.myChangeHandler}
                                     placeholder="e.g. #pixel3a, #covid19, iPhone12"
                                 />
-                                <button id='btn_search' type="submit" onClick={this.handleFormSubmit}>Search</button>
+                                <button id='btn_search' type="submit" onClick={this.handleFormSubmit}>Analyze</button>
                         </div>
                         <div>
                             <p className="text-danger">{this.state.error}</p>

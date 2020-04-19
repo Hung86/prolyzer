@@ -12,6 +12,11 @@ class NavBar extends Component {
     console.log(" Invoked Navbar::Register");
   }
 
+  userInfo = e => {
+    e.preventDefault();
+    console.log(" Invoked Navbar::User");
+  }
+
   logOut = e => {
     //e.preventDefault();
     console.log(" Invoked Navbar::LogOut");
@@ -47,7 +52,7 @@ class NavBar extends Component {
                           </div>
                         ):(
                           <div>
-                            <a href="/register" className="button is-primary">
+                            <a href="/" onClick={this.userInfo}  className="button is-primary">
                               Hi <strong>{this.props.appAuth.getUser().username}</strong>
                             </a>
                             <a href="/" onClick={this.logOut} className="button is-light">

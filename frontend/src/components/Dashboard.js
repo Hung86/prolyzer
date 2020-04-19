@@ -6,6 +6,8 @@ import {
     PolarGrid,
     PolarAngleAxis,
     PolarRadiusAxis,
+    BarChart,
+    Bar,
     LineChart,
     Line,
     XAxis,
@@ -20,6 +22,7 @@ import {parse} from "querystring";
 import NavBar from './NavBar';
 
 
+const moment = require('moment');
 
 const toPercent = (decimal, fixed = 0) => `${(decimal).toFixed(fixed)}%`;
 
@@ -56,6 +59,26 @@ const stack_bar_chart_sampe = [
     {name: 'Page G', Anger: 3490, Fear: 4300, Joy: 0,},
   ];
 
+  const composed_chart_sample = [
+    {
+      name: 'Page A', uv: 590, pv: 800, amt: 1400,
+    },
+    {
+      name: 'Page B', uv: 868, pv: 967, amt: 1506,
+    },
+    {
+      name: 'Page C', uv: 1397, pv: 1098, amt: 989,
+    },
+    {
+      name: 'Page D', uv: 1480, pv: 1200, amt: 1228,
+    },
+    {
+      name: 'Page E', uv: 1520, pv: 1108, amt: 1100,
+    },
+    {
+      name: 'Page F', uv: 1400, pv: 680, amt: 1700,
+    },
+  ];
 
 class Dashboard extends Component {
     constructor(props) {
@@ -75,13 +98,19 @@ class Dashboard extends Component {
                 let data;
                 if (user) {
                     let tone_res = await Api.prolyzer(search,user.username);
+                    let hashtag_all_res = await Api.prolyzer_hash_tag(search);
                     let last_10_days_res = await Api.prolyzer_last_10_days(search,user.username)
-                    data = {'tone' : tone_res.data['tone_response'], 'history' : last_10_days_res.data['db_response']};
+                    let history_all_res = await Api.prolyzer_user_history(user.username);
+
+                    data = {'tone' : tone_res.data['tone_response'],
+                            'history' : last_10_days_res.data['db_response'],
+                            'history_all' : history_all_res.data['db_response'],
+                            'hash_tag' : hashtag_all_res.data['db_response']};
                     this.setState({prolyzer: data, isAuthenticated: true});
                 } else {
                     let tone_res = await Api.prolyzer(search, "anonymous");
-                    let history_res = await Api.prolyzer_user_history("anonymous");
-                    data = {'tone' : tone_res.data['tone_response'], 'history' : history_res.data['db_response']};
+                    let hashtag_all_res = await Api.prolyzer_hash_tag(search);
+                    data = {'tone' : tone_res.data['tone_response'], 'hash_tag' : hashtag_all_res.data['db_response']};
                     this.setState({prolyzer: data, isAuthenticated: false});
                 }
             } else {
@@ -98,7 +127,9 @@ class Dashboard extends Component {
         console.log(prolyzer);
 
         let radar_chart_data = [];
+        let line_chart_data = [];
         let stack_chart_data = [];
+        let composed_chart_data = [];
         let search_term = "";
         if (prolyzer) {
             let tones = {Anger: 0.1, Fear: 0.1, Joy: 0.1, Sadness: 0.1, Analytical: 0.1, Confident: 0.1, Tentative: 0.1};
@@ -122,32 +153,90 @@ class Dashboard extends Component {
                // let valid_item = {};
                let len = prolyzer["history"].length;
                console.log("history length : " + len);
-               let start_idx = len - 20;
-               for (; start_idx < len; start_idx++) {
-                  let item = {'name': 'Page A', 'Anger': 0.0, 'Fear': 0.0, 'Joy': 0.0, 'Sadness': 0.0, 'Analytical': 0.0, 'Confident': 0.0, 'Tentative' : 0.0};
-                  let entry  = prolyzer["history"][start_idx];
-                  let created_at = entry['created_at'];
-                  console.log("day: " + created_at);  
 
-                  item["name"] = created_at;
+               for (let start_idx = len-1; start_idx > -1 ; start_idx--) {
+                    let item = {'name': 'Page A', 'Anger': 0.0, 'Fear': 0.0, 'Joy': 0.0, 'Sadness': 0.0, 'Analytical': 0.0, 'Confident': 0.0, 'Tentative' : 0.0};
+                    let entry  = prolyzer["history"][start_idx];
+                    let created_at = entry['created_at'];
+                    console.log("day: " + created_at);  
+                    let utc_time = created_at + " UTC"
+                    let local_time = new Date(utc_time);
                 
-                  let entry_tone1 = entry['tonename1'];
-                  let entry_tone2 = entry['tonename2'];
-                  if (entry_tone1 && entry_tone1 !== "null") {
-                      item[entry_tone1] = (entry['score1']*100).toFixed(2);
+                    item["name"] = moment(local_time).format('lll');
+                    
+                    let entry_tone1 = entry['tonename1'];
+                    let entry_tone2 = entry['tonename2'];
+                    if (entry_tone1 && entry_tone1 !== "null") {
+                        item[entry_tone1] = (entry['score1']*100).toFixed(2);
 
-                  }
+                    }
           
-                  if (entry_tone2 && entry_tone2 !== "null") {
-                      item[entry_tone2] = (entry['score2']*100).toFixed(2);
-                  }
-                  stack_chart_data.push(item);
+                    if (entry_tone2 && entry_tone2 !== "null") {
+                        item[entry_tone2] = (entry['score2']*100).toFixed(2);
+                    }
+                    line_chart_data.splice(0,0,item);
+
+                    if (line_chart_data.length > 20) {
+                        break;
+                    }
+                }
+
+            }
+
+            if (prolyzer.hasOwnProperty("history_all")) {
+                let valid_item = {};
+                let ordered_search = []
+                let len = prolyzer["history_all"].length;
+                console.log("history_all length : " + len);       
+ 
+                for (let start_idx = len-1; start_idx > -1 ; start_idx--) {
+                   let entry  = prolyzer["history_all"][start_idx];
+                   let search_term_2 = entry['search_term'];
+                   if (search_term_2 !== "") {
+                        if(!valid_item.hasOwnProperty(search_term_2)) {
+                            valid_item[search_term_2] = 1;
+                            if (ordered_search.length < 21) {
+                                ordered_search.splice(0,0,search_term_2);
+                            }
+                        } else {
+                            valid_item[search_term_2] += 1;
+
+                        }
+                   }
+                }
+
+                let len2 = ordered_search.length
+
+                for (let start_idx2 = 0; start_idx2 < len2; start_idx2++) {
+                    let item = {'name': 'Page A', 'count': 0};
+                    let search_term_3  = ordered_search[start_idx2];
+                    item["name"] = search_term_3;
+                    item["count"] = valid_item[search_term_3]
+                    stack_chart_data.push(item);
+                }
+            }
+
+            if (prolyzer.hasOwnProperty("hash_tag")) {
+                let len = prolyzer["hash_tag"].length;
+                console.log("hash_tag length : " + len);       
+                let limit_len = 5;
+                if (len < 5) {
+                    limit_len = len;
+                }
+
+                for (let start_idx = 0; start_idx < limit_len; start_idx++) {
+                   let entry  = prolyzer["hash_tag"][start_idx];
+
+                   composed_chart_data.push(entry);
+
                 }
             }
 
         } else {
             radar_chart_data = data4;
+            line_chart_data = stack_bar_chart_sampe;
             stack_chart_data = stack_bar_chart_sampe;
+            composed_chart_data = composed_chart_sample
         }
 
 
@@ -158,35 +247,81 @@ class Dashboard extends Component {
         ) : (
             <div>
                 <NavBar appAuth={this.props.appAuth}/>
-                
                 <div align="center" >
-                <h1>{search_term}</h1>
-                    <RadarChart cx={300} cy={260} outerRadius={225} width={600} height={520} data={radar_chart_data}>
-                        <PolarGrid/>
-                        <PolarAngleAxis dataKey="subject"/>
-                        <PolarRadiusAxis/>
-                        <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6}/>
-                    </RadarChart>
+                         <h1>{search_term}</h1>
+                        <RadarChart cx={300} cy={260} outerRadius={225} width={600} height={520} data={radar_chart_data}>
+                            <PolarGrid/>
+                            <PolarAngleAxis dataKey="subject"/>
+                            <PolarRadiusAxis/>
+                            <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6}/>
+                        </RadarChart>
+                        <br></br>
+
                 </div>
+                <div align="center">
+                    <table width="40%">
+                        <thead>
+                            <tr>
+                                <th  width="10%">Index</th>
+                                <th>Hashtag Co-occurence Matrix</th> 
+                                <th   width="10%">Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                composed_chart_data.map((hashtag_item, index)=>{
+                                return (<tr>
+                                            <td >{index}</td>
+                                            <td>{hashtag_item['hashtags']}</td>
+                                            <td >{hashtag_item['count']}</td>
+                                        </tr>)
+                                 })
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
                 {isAuthenticated &&
                 (<div align="center">
-                <h1>Past Analyses:</h1>
+                <h1>Sentiment Scoring Timline</h1>
 
-                    <LineChart width={1000} height={650} data={stack_chart_data}>
+                    <LineChart width={1000} height={650} data={line_chart_data}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" height={110} interval={0}  tick={<CustomizedAxisTick />} padding={{ left: 30, right: 30 }}/>
-                        <YAxis domain={[0, 100]} tickFormatter={toPercent} />
+                        <XAxis dataKey="name" height={120} interval={0}  tick={<CustomizedAxisTick />} padding={{ left: 30, right: 30 } } label={{ value: 'Datetime', position: 'insideBottomRight', offset: 0 }}/>
+                        <YAxis domain={[0, 100]} tickFormatter={toPercent} label={{ value: 'Twitter Sentiment', angle: -90, position: 'insideLeft' }}/>
                         <Tooltip/>
                         <Legend />
-                        <Line type="monotone" dataKey="Anger"  stroke="#FF0000" />
-                        <Line type="monotone" dataKey="Fear"  stroke="#FE9A2E" />
-                        <Line type="monotone" dataKey="Joy"  stroke="#00BFFF" />
-                        <Line type="monotone" dataKey="Sadness"  stroke="#A4A4A4" />
-                        <Line type="monotone" dataKey="Analytical" stroke="#8904B1" />
-                        <Line type="monotone" dataKey="Confident"  stroke="#01DFD7" />
-                        <Line type="monotone" dataKey="Tentative" stroke="#FFCA33" />
+                        <Line type="monotone" dataKey="Anger"  stroke="#FF0000" unit="%"/>
+                        <Line type="monotone" dataKey="Fear"  stroke="#FE9A2E" unit="%"/>
+                        <Line type="monotone" dataKey="Joy"  stroke="#00BFFF" unit="%"/>
+                        <Line type="monotone" dataKey="Sadness"  stroke="#A4A4A4" unit="%"/>
+                        <Line type="monotone" dataKey="Analytical" stroke="#8904B1" unit="%"/>
+                        <Line type="monotone" dataKey="Confident"  stroke="#01DFD7" unit="%"/>
+                        <Line type="monotone" dataKey="Tentative" stroke="#FFCA33" unit="%"/>
                     </LineChart>
-                </div>)
+
+                    <br/>
+                    <h1>Tweet Fequency Analysis</h1>
+
+                    <BarChart
+                        width={1040}
+                        height={650}
+                        data={stack_chart_data}
+                        margin={{
+                        top: 20, right: 30, left: 20, bottom: 5,
+                        }}
+                    >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" height={110} interval={0}  tick={<CustomizedAxisTick />} label={{ value: 'Hashtags/Mentions', position: 'insideBottomRight', offset: 0 }}/>
+                        <YAxis  label={{ value: 'Count', angle: -90, position: 'insideLeft' }} />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="count" stackId="a" fill="#00BFFF"/>
+
+                    </BarChart>
+                </div>
+                
+                )
                 }
 
             </div>

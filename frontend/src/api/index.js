@@ -23,6 +23,7 @@ export default class Api {
     //https://a5wmdtrzg7.execute-api.ap-southeast-1.amazonaws.com/production/dbusersearch?user=tom&search=iphonex
 
     static prolyzer = (search, user) => Api.axiosInstance.get('/prolyzer', {params: {search, user: user || "anonymous"}});
+    static prolyzer_hash_tag = (search) => Api.axiosInstance.get('/dbhashtagscount', {params: {search}});
     static prolyzer_user_history = (user) => Api.axiosInstance.get('/dbuser', {params: {user}});
     static prolyzer_last_10_days = (search, user) => Api.axiosInstance.get('/dbusersearch', {params: {user, search}});
 }
