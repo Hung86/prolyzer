@@ -14,6 +14,7 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
+    LabelList,
     Legend
 } from 'recharts';
 
@@ -39,6 +40,22 @@ class CustomizedAxisTick extends Component {
     );
   }
 }
+
+const renderCustomizedLabel = (props) => {
+    const {
+      x, y, width, value,
+    } = props;
+    const radius = 20;
+  
+    return (
+      <g>
+        <circle cx={x + width / 2} cy={y - radius} r={radius} fill="#8884d8" />
+        <text x={x + width / 2} y={y - radius} fill="#fff" textAnchor="middle" dominantBaseline="middle">
+          {value}
+        </text>
+      </g>
+    );
+  };
 
 const data4 = [
     {subject: 'Math', A: 0.1, fullMark: 1,},
@@ -158,7 +175,6 @@ class Dashboard extends Component {
                     let item = {'name': 'Page A', 'Anger': 0.0, 'Fear': 0.0, 'Joy': 0.0, 'Sadness': 0.0, 'Analytical': 0.0, 'Confident': 0.0, 'Tentative' : 0.0};
                     let entry  = prolyzer["history"][start_idx];
                     let created_at = entry['created_at'];
-                    console.log("day: " + created_at);  
                     let utc_time = created_at + " UTC"
                     let local_time = new Date(utc_time);
                 
@@ -194,13 +210,24 @@ class Dashboard extends Component {
                    let search_term_2 = entry['search_term'];
                    if (search_term_2 !== "") {
                         if(!valid_item.hasOwnProperty(search_term_2)) {
-                            valid_item[search_term_2] = 1;
+                            valid_item[search_term_2] = {'count': 0, 'Anger': [0.0, 0], 'Fear': [0.0,0], 'Joy': [0.0,0], 'Sadness': [0.0,0], 'Analytical': [0.0,0], 'Confident': [0.0,0], 'Tentative' : [0.0,0]};
                             if (ordered_search.length < 21) {
                                 ordered_search.splice(0,0,search_term_2);
                             }
-                        } else {
-                            valid_item[search_term_2] += 1;
-
+                        } 
+                        let search_value = valid_item[search_term_2]
+                        search_value['count'] += 1
+                        let entry_tone1 = entry['tonename1'];
+                        let entry_tone2 = entry['tonename2'];
+                        if (entry_tone1 && entry_tone1 !== "null") {
+                            search_value[entry_tone1][0] += parseFloat(entry['score1']);
+                            search_value[entry_tone1][1] += 1
+    
+                        }
+              
+                        if (entry_tone2 && entry_tone2 !== "null") {
+                            search_value[entry_tone2][0] += parseFloat(entry['score2']);
+                            search_value[entry_tone2][1] += 1
                         }
                    }
                 }
@@ -208,10 +235,38 @@ class Dashboard extends Component {
                 let len2 = ordered_search.length
 
                 for (let start_idx2 = 0; start_idx2 < len2; start_idx2++) {
-                    let item = {'name': 'Page A', 'count': 0};
+                    let item = {'name': 'Page A', 'count': 0,'Anger': 0.0, 'Fear': 0.0, 'Joy': 0.0, 'Sadness': 0.0, 'Analytical': 0.0, 'Confident': 0.0, 'Tentative' : 0.0};
                     let search_term_3  = ordered_search[start_idx2];
-                    item["name"] = search_term_3;
-                    item["count"] = valid_item[search_term_3]
+                    let val = valid_item[search_term_3]
+                    item["name"] = search_term_3
+                    item["count"] = val['count']
+                    if (val['Anger'][1] > 0) {
+                        item['Anger'] = ((val['Anger'][0]/val['Anger'][1])*100).toFixed(2);
+                    }
+                    if (val['Fear'][1] > 0) {
+                        item['Fear'] = ((val['Fear'][0]/val['Fear'][1])*100).toFixed(2);
+
+                    }
+                    if (val['Joy'][1] > 0) {
+                        item['Joy'] = ((val['Joy'][0]/val['Joy'][1])*100).toFixed(2);
+
+                    }
+                    if (val['Sadness'][1] > 0) {
+                        item['Sadness'] = ((val['Sadness'][0]/val['Sadness'][1])*100).toFixed(2);
+
+                    }
+                    if (val['Analytical'][1] > 0) {
+                        item['Analytical'] = ((val['Analytical'][0]/val['Analytical'][1])*100).toFixed(2);
+
+                    }
+                    if (val['Confident'][1] > 0) {
+                        item['Confident'] = ((val['Confident'][0]/val['Confident'][1])*100).toFixed(2);
+
+                    }
+                    if (val['Tentative'][1] > 0) {
+                        item['Tentative'] = ((val['Tentative'][0]/val['Tentative'][1])*100).toFixed(2);
+
+                    }
                     stack_chart_data.push(item);
                 }
             }
@@ -301,7 +356,7 @@ class Dashboard extends Component {
                     </LineChart>
 
                     <br/>
-                    <h1>Tweet Fequency Analysis</h1>
+                    <h1>Tweet Frequency Analysis</h1>
 
                     <BarChart
                         width={1040}
@@ -313,10 +368,19 @@ class Dashboard extends Component {
                     >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" height={110} interval={0}  tick={<CustomizedAxisTick />} label={{ value: 'Hashtags/Mentions', position: 'insideBottomRight', offset: 0 }}/>
-                        <YAxis  label={{ value: 'Count', angle: -90, position: 'insideLeft' }} />
+                        <YAxis  domain={[0, 'dataMax + 20']} tick={false} label={{ value: 'Count', angle: -90, position: 'insideLeft' }} />
                         <Tooltip />
                         <Legend />
-                        <Bar dataKey="count" stackId="a" fill="#00BFFF"/>
+                        {/* <Bar dataKey="count" stackId="a" fill="#00BFFF" /> */}
+                        <Bar dataKey="Anger" stackId="a" fill="#FF0000" unit="%"/>
+                        <Bar dataKey="Fear" stackId="a" fill="#FE9A2E" unit="%"/>
+                        <Bar dataKey="Joy" stackId="a" fill="#00BFFF" unit="%"/>
+                        <Bar dataKey="Sadness" stackId="a" fill="#A4A4A4" unit="%"/>
+                        <Bar dataKey="Analytical" stackId="a" fill="#8904B1" unit="%"/>
+                        <Bar dataKey="Confident" stackId="a" fill="#01DFD7" unit="%"/>
+                        <Bar dataKey="Tentative" stackId="a" fill="#FFCA33" unit="%">
+                            <LabelList dataKey="count" content={renderCustomizedLabel} />
+                        </Bar>
 
                     </BarChart>
                 </div>
