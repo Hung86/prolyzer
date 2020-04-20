@@ -13,10 +13,10 @@ def dbusersearch(event, context):
 
     print("Connecting to database...")
     mydb = mysql.connector.connect(
-        host="prolyzer-backend-production.cr28byc2iyut.ap-southeast-1.rds.amazonaws.com",
+        host=os.environ.get("DB_ENDPOINT"),
         user="admin",
         passwd="password",
-        database="prolyzer"
+        database=os.environ.get("TABLE_NAME")
     )
     print("Connected to database")
     

@@ -47,7 +47,7 @@ resources:
         BackupRetentionPeriod: 35
         DBInstanceClass: db.t2.small
         DBInstanceIdentifier: ${{self:service}}-${{self:provider.stage}}
-        DBName: ${{env:PROLYZER_DB_SCHEMA}}
+        DBName: ${{env:PROLYZER_DB_SCHEMA, self:custom.defaultDBSchema}}
         DeleteAutomatedBackups: true
         EnableCloudwatchLogsExports:
           - audit
@@ -56,8 +56,8 @@ resources:
           - slowquery
         Engine: mysql
         EngineVersion: 5.7.22
-        MasterUsername: ${{env:PROLYZER_DB_USER}}
-        MasterUserPassword: ${{env:PROLYZER_DB_PASS}}
+        MasterUsername: ${{env:PROLYZER_DB_USER, self:custom.defaultDBUsername}}
+        MasterUserPassword: ${{env:PROLYZER_DB_PASS, self:custom.defaultDBPassword}}
         MaxAllocatedStorage: 1000
         MonitoringInterval: 60
         MonitoringRoleArn: {"Fn::GetAtt": ["RdsMonitoringRole", "Arn"]}
@@ -126,7 +126,7 @@ functions:
          method: get
          cors: true
     environment:
-      TABLE_NAME: ${{env:PROLYZER_DB_SCHEMA}}
+      TABLE_NAME: ${{env:PROLYZER_DB_SCHEMA, self:custom.defaultDBSchema}}
       DB_ENDPOINT: !GetAtt [ProlyzerMySqlRDSInstance, Endpoint.Address]
   dbuser:
     name: ${{self:service}}-${{self:provider.stage}}-dbuser
@@ -140,7 +140,7 @@ functions:
          method: get
          cors: true
     environment:
-      TABLE_NAME: ${{env:PROLYZER_DB_SCHEMA}}
+      TABLE_NAME: ${{env:PROLYZER_DB_SCHEMA, self:custom.defaultDBSchema}}
       DB_ENDPOINT: !GetAtt [ProlyzerMySqlRDSInstance, Endpoint.Address]
   dbhashtags:
     name: ${{self:service}}-${{self:provider.stage}}-dbhashtags
@@ -168,7 +168,7 @@ functions:
          method: get
          cors: true
     environment:
-      TABLE_NAME: ${{env:PROLYZER_DB_SCHEMA}}
+      TABLE_NAME: ${{env:PROLYZER_DB_SCHEMA, self:custom.defaultDBSchema}}
       DB_ENDPOINT: !GetAtt [ProlyzerMySqlRDSInstance, Endpoint.Address]
   dbhashtagscount:
     name: ${{self:service}}-${{self:provider.stage}}-dbhashtagscount
@@ -182,7 +182,7 @@ functions:
          method: get
          cors: true
     environment:
-      TABLE_NAME: ${{env:PROLYZER_DB_SCHEMA}}
+      TABLE_NAME: ${{env:PROLYZER_DB_SCHEMA, self:custom.defaultDBSchema}}
       DB_ENDPOINT: !GetAtt [ProlyzerMySqlRDSInstance, Endpoint.Address]
 
 custom:
@@ -201,3 +201,7 @@ custom:
     dockerizePip: non-linux
 
   VpcId: ${{env:DEFAULT_VPC_ID}}
+
+  defaultDBUsername: admin
+  defaultDBPassword: password
+  defaultDBSchema: prolyzer
