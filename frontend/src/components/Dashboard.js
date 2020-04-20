@@ -336,7 +336,7 @@ class Dashboard extends Component {
                 <br/>
                 {isAuthenticated &&
                 (<div align="center">
-                <h1>Sentiment Scoring Timline</h1>
+                <h1>Sentiment Scoring Timeline</h1>
 
                     <LineChart width={1000} height={650} data={line_chart_data}>
                         <CartesianGrid strokeDasharray="3 3" />
