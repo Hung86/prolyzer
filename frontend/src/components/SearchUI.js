@@ -36,7 +36,11 @@ class SearchUI extends React.Component {
                 <div className='App'>
                     <form onSubmit={this.handleFormSubmit}>
                         <h1>Welcome to Prolyzer</h1>
-                        <p className="text-muted">Prolyzer tagline, instructions and description here</p>
+                        <p className="text-muted">
+                            Prolyzer is intended to help you analyze and visualize market sentiment on your marketing
+                            campaign or product, in order to help you make smarter business decisions. Simply enter a
+                            search query below, similar to how you would search for tweets to analyze tweets.
+                        </p>
                         <div>
                             <label>Enter a search query:</label>
                             <input
