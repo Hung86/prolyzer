@@ -6,4 +6,4 @@ This is a monorepo so projects are organized front/back end. You can install dep
 
 It consists of the frontend code developed using ReactJS a javascript library for building user interfaces.
 
-And the backend code developed using Python to crawl tweets, preprocess them and send to IBM Watson Tone Analyzer for sentiment analysis. It also consists the database operations for storing and retrieval of tweets and the results for frontend to display.
+And the backend code developed using Python to crawl tweets, preprocess them and send to IBM Watson Tone Analyzer for sentiment analysis. It also consists of the necessary database operations for storing and retrieval of tweets and the results for frontend to display.
